@@ -1,9 +1,15 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
+    if (!isSupabaseConfigured) {
+        return NextResponse.json(
+            { error: "Database not configured. Please set Supabase credentials in .env.local" },
+            { status: 503 }
+        );
+    }
     try {
         const { name, phone, address } = await req.json();
 

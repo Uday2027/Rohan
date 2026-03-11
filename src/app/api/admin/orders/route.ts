@@ -1,9 +1,26 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { cookies } from "next/headers";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import { validTokens, TOKEN_NAME } from "@/app/api/admin/auth/route";
 
 export const dynamic = "force-dynamic";
 
+async function isAuthed() {
+    const cookieStore = await cookies();
+    const token = cookieStore.get(TOKEN_NAME)?.value;
+    return !!token && validTokens.has(token);
+}
+
 export async function GET() {
+    if (!(await isAuthed())) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (!isSupabaseConfigured) {
+        return NextResponse.json(
+            { error: "Database not configured. Please set Supabase credentials in .env.local" },
+            { status: 503 }
+        );
+    }
     try {
         const { data: orders, error } = await supabase
             .from('orders')
@@ -23,6 +40,15 @@ export async function GET() {
 }
 
 export async function PATCH(req: Request) {
+    if (!(await isAuthed())) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (!isSupabaseConfigured) {
+        return NextResponse.json(
+            { error: "Database not configured" },
+            { status: 503 }
+        );
+    }
     try {
         const { id, status } = await req.json();
 
@@ -48,6 +74,15 @@ export async function PATCH(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+    if (!(await isAuthed())) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (!isSupabaseConfigured) {
+        return NextResponse.json(
+            { error: "Database not configured" },
+            { status: 503 }
+        );
+    }
     try {
         const { id } = await req.json();
 
