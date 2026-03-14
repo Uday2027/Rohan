@@ -125,16 +125,62 @@ function CheckoutForm() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [deliveryCharge, setDeliveryCharge] = useState(60);
+  const [division, setDivision] = useState("");
+  const [zilla, setZilla] = useState("");
+  const [detailAddress, setDetailAddress] = useState("");
+
+  // Full Bangladesh divisions and zillas
+  const divisions = [
+    { name: "Dhaka", zillas: [
+      "Dhaka", "Faridpur", "Gazipur", "Gopalganj", "Kishoreganj", "Madaripur", "Manikganj", "Munshiganj", "Narayanganj", "Narsingdi", "Rajbari", "Shariatpur", "Tangail"
+    ] },
+    { name: "Chattogram", zillas: [
+      "Bandarban", "Brahmanbaria", "Chandpur", "Chattogram", "Cox's Bazar", "Cumilla", "Feni", "Khagrachari", "Lakshmipur", "Noakhali", "Rangamati"
+    ] },
+    { name: "Rajshahi", zillas: [
+      "Bogura", "Joypurhat", "Naogaon", "Natore", "Chapai Nawabganj", "Pabna", "Rajshahi", "Sirajganj"
+    ] },
+    { name: "Khulna", zillas: [
+      "Bagerhat", "Chuadanga", "Jashore", "Jhenaidah", "Khulna", "Kushtia", "Magura", "Meherpur", "Narail", "Satkhira"
+    ] },
+    { name: "Barishal", zillas: [
+      "Barguna", "Barishal", "Bhola", "Jhalokathi", "Patuakhali", "Pirojpur"
+    ] },
+    { name: "Sylhet", zillas: [
+      "Habiganj", "Moulvibazar", "Sunamganj", "Sylhet"
+    ] },
+    { name: "Rangpur", zillas: [
+      "Dinajpur", "Gaibandha", "Kurigram", "Lalmonirhat", "Nilphamari", "Panchagarh", "Rangpur", "Thakurgaon"
+    ] },
+    { name: "Mymensingh", zillas: [
+      "Jamalpur", "Mymensingh", "Netrokona", "Sherpur"
+    ] },
+  ];
+  const selectedDivision = divisions.find(d => d.name === division);
+  const zillaOptions = selectedDivision ? selectedDivision.zillas : [];
+  const [qtyBlack, setQtyBlack] = useState("");
+  const [qtyWhite, setQtyWhite] = useState("");
+  const unitPrice = 390;
+  const totalQty = (parseInt(qtyBlack) || 0) + (parseInt(qtyWhite) || 0);
+  const productTotal = totalQty * unitPrice;
+  const totalPrice = productTotal + deliveryCharge;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     const formData = new FormData(e.currentTarget);
+    const address = `${formData.get("division")}, ${formData.get("zilla")}, ${formData.get("detail_address")}`;
     const data = {
       name: formData.get("name"),
       phone: formData.get("phone"),
-      address: formData.get("address"),
+      address,
+      qty_black: Number(formData.get("qty_black")),
+      qty_white: Number(formData.get("qty_white")),
+      delivery_area: formData.get("zilla") === "Dhaka" ? "inside" : "outside",
+      delivery_charge: formData.get("zilla") === "Dhaka" ? 60 : 100,
+      total_price: ((parseInt(formData.get("qty_black") as string) || 0) + (parseInt(formData.get("qty_white") as string) || 0)) * unitPrice + (formData.get("zilla") === "Dhaka" ? 60 : 100),
     };
     try {
       const res = await fetch("/api/orders", {
@@ -184,14 +230,75 @@ function CheckoutForm() {
         </div>
       </div>
       <div className="space-y-2">
-        <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-1">পূর্ণাঙ্গ ঠিকানা *</label>
-        <textarea name="address" rows={3} className="w-full bg-zinc-950/50 border border-white/5 rounded-xl md:rounded-2xl px-4 py-3.5 md:px-5 md:py-4 focus:outline-none focus:border-blue-500 transition-all text-white text-sm md:text-base resize-none placeholder:text-zinc-700 focus:bg-zinc-900/80 focus:ring-4 focus:ring-blue-500/10" placeholder="জেলা, উপজেলা, গ্রাম/বাড়ি নম্বর সহ সম্পূর্ণ ঠিকানা" required />
+        <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-1">বিভাগ *</label>
+        <select
+          name="division"
+          className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3.5 focus:outline-none focus:border-blue-500 transition-all text-white text-sm appearance-none shadow-sm focus:bg-zinc-900/80"
+          required
+          value={division}
+          onChange={e => {
+            setDivision(e.target.value);
+            setZilla("");
+          }}
+          style={{backgroundImage: 'linear-gradient(45deg, #6366f1 0%, #a21caf 100%)', backgroundBlendMode: 'multiply'}}
+        >
+          <option value="">বিভাগ নির্বাচন করুন</option>
+          {divisions.map(d => (
+            <option key={d.name} value={d.name}>{d.name}</option>
+          ))}
+        </select>
       </div>
-      <button type="submit" disabled={loading} className="cursor-pointer shimmer-btn w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-black text-base md:text-xl py-4 md:py-5 rounded-xl md:rounded-2xl transition-all shadow-[0_20px_40px_-10px_rgba(79,70,229,0.4)] disabled:opacity-60 flex items-center justify-center gap-2 md:gap-3 active:scale-95">
+      <div className="space-y-2">
+        <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-1">জেলা *</label>
+        <select
+          name="zilla"
+          className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3.5 focus:outline-none focus:border-blue-500 transition-all text-white text-sm appearance-none shadow-sm focus:bg-zinc-900/80"
+          required
+          value={zilla}
+          onChange={e => {
+            setZilla(e.target.value);
+            setDeliveryCharge(e.target.value === "Dhaka" ? 60 : 100);
+          }}
+          disabled={!division}
+          style={{backgroundImage: 'linear-gradient(45deg, #6366f1 0%, #a21caf 100%)', backgroundBlendMode: 'multiply'}}
+        >
+          <option value="">জেলা নির্বাচন করুন</option>
+          {zillaOptions.map(z => (
+            <option key={z} value={z}>{z}</option>
+          ))}
+        </select>
+      </div>
+      <div className="space-y-2">
+        <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-1">বিস্তারিত ঠিকানা *</label>
+        <input
+          type="text"
+          name="detail_address"
+          className="w-full bg-zinc-950/50 border border-white/5 rounded-xl px-4 py-3.5 focus:outline-none focus:border-blue-500 transition-all text-white text-sm"
+          placeholder="গ্রাম/বাড়ি নম্বর, উপজেলা, ইত্যাদি"
+          required
+          value={detailAddress}
+          onChange={e => setDetailAddress(e.target.value)}
+        />
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="space-y-2">
+          <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-1">কালো প্ল্যানার (Black) সংখ্যা</label>
+          <input type="number" name="qty_black" min="0" value={qtyBlack} onChange={e => setQtyBlack(e.target.value)} className="w-full bg-zinc-950/50 border border-white/5 rounded-xl px-4 py-3.5 focus:outline-none focus:border-blue-500 transition-all text-white text-sm placeholder:text-zinc-700 focus:bg-zinc-900/80 focus:ring-4 focus:ring-blue-500/10" />
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-1">সাদা প্ল্যানার (White) সংখ্যা</label>
+          <input type="number" name="qty_white" min="0" value={qtyWhite} onChange={e => setQtyWhite(e.target.value)} className="w-full bg-zinc-950/50 border border-white/5 rounded-xl px-4 py-3.5 focus:outline-none focus:border-blue-500 transition-all text-white text-sm placeholder:text-zinc-700 focus:bg-zinc-900/80 focus:ring-4 focus:ring-blue-500/10" />
+        </div>
+      </div>
+      {/* Delivery area selection removed, now auto-calculated from zilla */}
+      <div className="text-center text-sm text-zinc-400">মোট পণ্য: <span className="font-bold text-white">{totalQty}</span> × ৩৯০ = <span className="font-bold text-white">{productTotal} টাকা</span></div>
+      <div className="text-center text-sm text-zinc-400">ডেলিভারি চার্জ: <span className="font-bold text-white">{deliveryCharge} টাকা</span></div>
+      <div className="text-center text-lg font-bold text-white bg-blue-500/10 border border-blue-500/20 rounded-xl py-3">মোট মূল্য: {totalPrice} টাকা</div>
+      <button type="submit" disabled={loading || totalQty === 0} className="cursor-pointer shimmer-btn w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-black text-base md:text-xl py-4 md:py-5 rounded-xl md:rounded-2xl transition-all shadow-[0_20px_40px_-10px_rgba(79,70,229,0.4)] disabled:opacity-60 flex items-center justify-center gap-2 md:gap-3 active:scale-95">
         {loading ? (
           <><div className="w-6 h-6 border-3 border-white/30 border-t-white rounded-full animate-spin" />প্রসেসিং...</>
         ) : (
-          <><ShoppingCart size={24} className="drop-shadow" />এখনই অর্ডার করুন — ৩৯০ টাকা</>
+          <><ShoppingCart size={24} className="drop-shadow" />এখনই অর্ডার করুন</>
         )}
       </button>
       <div className="flex items-center justify-center gap-6 pt-2">

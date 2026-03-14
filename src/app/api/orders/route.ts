@@ -11,9 +11,9 @@ export async function POST(req: Request) {
         );
     }
     try {
-        const { name, phone, address } = await req.json();
+        const { name, phone, address, qty_black, qty_white, delivery_area, delivery_charge, total_price } = await req.json();
 
-        if (!name || !phone || !address) {
+        if (!name || !phone || !address || (qty_black == null && qty_white == null) || !delivery_area) {
             return NextResponse.json(
                 { error: "সব ফিল্ড পূরণ করা আবশ্যক।" },
                 { status: 400 }
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
         const { data, error } = await supabase
             .from('orders')
             .insert([
-                { name, phone, address, status: 'Pending' }
+                { name, phone, address, qty_black, qty_white, delivery_area, delivery_charge, total_price, status: 'Pending' }
             ])
             .select();
 

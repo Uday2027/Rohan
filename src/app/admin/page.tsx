@@ -15,6 +15,11 @@ interface Order {
   name: string;
   phone: string;
   address: string;
+  qty_black: number;
+  qty_white: number;
+  delivery_area: string;
+  delivery_charge: number;
+  total_price: number;
   status: string;
 }
 
@@ -152,6 +157,26 @@ function ReceiptModal({ order, onClose, onCopy }: { order: Order; onClose: () =>
                 {order.status}
               </span>
             </div>
+            <div className="flex justify-between">
+              <span className="text-zinc-500">Black Qty</span>
+              <span className="text-zinc-300">{order.qty_black}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-zinc-500">White Qty</span>
+              <span className="text-zinc-300">{order.qty_white}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-zinc-500">Delivery Area</span>
+              <span className="text-zinc-300">{order.delivery_area === 'inside' ? 'Inside Dhaka' : 'Outside Dhaka'}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-zinc-500">Delivery Charge</span>
+              <span className="text-zinc-300">৳ {order.delivery_charge}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-zinc-500">Total Price</span>
+              <span className="text-zinc-300 font-bold">৳ {order.total_price}</span>
+            </div>
           </div>
 
           <div className="border-t border-dashed border-zinc-700 my-4" />
@@ -186,7 +211,7 @@ function ReceiptModal({ order, onClose, onCopy }: { order: Order; onClose: () =>
 
           <div className="mt-5 bg-blue-500/10 border border-blue-500/20 rounded-2xl p-4 text-center">
             <div className="text-3xl font-black text-white">৳ ৩৯০</div>
-            <p className="text-xs text-zinc-500 mt-1">+ ডেলিভারি চার্জ ৬০–১০০ টাকা</p>
+            <p className="text-xs text-zinc-500 mt-1">+ ডেলিভারি চার্জ {order.delivery_charge} টাকা</p>
           </div>
         </div>
 
@@ -440,7 +465,7 @@ export default function AdminDashboard() {
             { label: "Total Orders", value: orders.length, icon: <ShoppingCart size={20} />, bg: "from-blue-600/10 to-blue-800/5", border: "border-blue-500/20", text: "text-blue-400" },
             { label: "Pending", value: pendingCount, icon: <Clock size={20} />, bg: "from-orange-600/10 to-orange-800/5", border: "border-orange-500/20", text: "text-orange-400" },
             { label: "Completed", value: completedCount, icon: <CheckCircle size={20} />, bg: "from-green-600/10 to-green-800/5", border: "border-green-500/20", text: "text-green-400" },
-            { label: "Revenue (Est.)", value: `৳${(orders.length * 390).toLocaleString()}`, icon: <TrendingUp size={20} />, bg: "from-purple-600/10 to-purple-800/5", border: "border-purple-500/20", text: "text-purple-400" },
+            { label: "Revenue (Est.)", value: `৳${orders.reduce((sum, o) => sum + (o.total_price || 0), 0).toLocaleString()}`, icon: <TrendingUp size={20} />, bg: "from-purple-600/10 to-purple-800/5", border: "border-purple-500/20", text: "text-purple-400" },
           ].map((s, i) => (
             <div key={i} className={`bg-gradient-to-br ${s.bg} border ${s.border} rounded-2xl p-5 transition-all hover:scale-[1.02]`}>
               <div className={`${s.text} mb-3 opacity-70`}>{s.icon}</div>
@@ -519,6 +544,10 @@ export default function AdminDashboard() {
                     <th className="p-4 font-bold text-xs text-zinc-500 uppercase tracking-widest">Order</th>
                     <th className="p-4 font-bold text-xs text-zinc-500 uppercase tracking-widest">Customer</th>
                     <th className="p-4 font-bold text-xs text-zinc-500 uppercase tracking-widest hidden md:table-cell">Address</th>
+                    <th className="p-4 font-bold text-xs text-zinc-500 uppercase tracking-widest">Black Qty</th>
+                    <th className="p-4 font-bold text-xs text-zinc-500 uppercase tracking-widest">White Qty</th>
+                    <th className="p-4 font-bold text-xs text-zinc-500 uppercase tracking-widest">Delivery</th>
+                    <th className="p-4 font-bold text-xs text-zinc-500 uppercase tracking-widest">Total</th>
                     <th className="p-4 font-bold text-xs text-zinc-500 uppercase tracking-widest">Status</th>
                     <th className="p-4 font-bold text-xs text-zinc-500 uppercase tracking-widest text-right">Actions</th>
                   </tr>
@@ -542,6 +571,13 @@ export default function AdminDashboard() {
                       <td className="p-4 hidden md:table-cell">
                         <div className="text-sm text-zinc-400 max-w-xs truncate" title={order.address}>{order.address}</div>
                       </td>
+                      <td className="p-4 text-center font-bold text-zinc-200">{order.qty_black}</td>
+                      <td className="p-4 text-center font-bold text-zinc-200">{order.qty_white}</td>
+                      <td className="p-4">
+                        <div className="text-xs text-zinc-400">{order.delivery_area === 'inside' ? 'Inside Dhaka' : 'Outside Dhaka'}</div>
+                        <div className="text-xs text-zinc-500">৳ {order.delivery_charge}</div>
+                      </td>
+                      <td className="p-4 text-center font-bold text-white">৳ {order.total_price}</td>
                       <td className="p-4">
                         <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border
                           ${order.status === "Completed"
