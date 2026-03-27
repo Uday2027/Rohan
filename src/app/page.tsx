@@ -132,30 +132,46 @@ function CheckoutForm() {
 
   // Full Bangladesh divisions and zillas
   const divisions = [
-    { name: "Dhaka", zillas: [
-      "Dhaka", "Faridpur", "Gazipur", "Gopalganj", "Kishoreganj", "Madaripur", "Manikganj", "Munshiganj", "Narayanganj", "Narsingdi", "Rajbari", "Shariatpur", "Tangail"
-    ] },
-    { name: "Chattogram", zillas: [
-      "Bandarban", "Brahmanbaria", "Chandpur", "Chattogram", "Cox's Bazar", "Cumilla", "Feni", "Khagrachari", "Lakshmipur", "Noakhali", "Rangamati"
-    ] },
-    { name: "Rajshahi", zillas: [
-      "Bogura", "Joypurhat", "Naogaon", "Natore", "Chapai Nawabganj", "Pabna", "Rajshahi", "Sirajganj"
-    ] },
-    { name: "Khulna", zillas: [
-      "Bagerhat", "Chuadanga", "Jashore", "Jhenaidah", "Khulna", "Kushtia", "Magura", "Meherpur", "Narail", "Satkhira"
-    ] },
-    { name: "Barishal", zillas: [
-      "Barguna", "Barishal", "Bhola", "Jhalokathi", "Patuakhali", "Pirojpur"
-    ] },
-    { name: "Sylhet", zillas: [
-      "Habiganj", "Moulvibazar", "Sunamganj", "Sylhet"
-    ] },
-    { name: "Rangpur", zillas: [
-      "Dinajpur", "Gaibandha", "Kurigram", "Lalmonirhat", "Nilphamari", "Panchagarh", "Rangpur", "Thakurgaon"
-    ] },
-    { name: "Mymensingh", zillas: [
-      "Jamalpur", "Mymensingh", "Netrokona", "Sherpur"
-    ] },
+    {
+      name: "Dhaka", zillas: [
+        "Dhaka", "Faridpur", "Gazipur", "Gopalganj", "Kishoreganj", "Madaripur", "Manikganj", "Munshiganj", "Narayanganj", "Narsingdi", "Rajbari", "Shariatpur", "Tangail"
+      ]
+    },
+    {
+      name: "Chattogram", zillas: [
+        "Bandarban", "Brahmanbaria", "Chandpur", "Chattogram", "Cox's Bazar", "Cumilla", "Feni", "Khagrachari", "Lakshmipur", "Noakhali", "Rangamati"
+      ]
+    },
+    {
+      name: "Rajshahi", zillas: [
+        "Bogura", "Joypurhat", "Naogaon", "Natore", "Chapai Nawabganj", "Pabna", "Rajshahi", "Sirajganj"
+      ]
+    },
+    {
+      name: "Khulna", zillas: [
+        "Bagerhat", "Chuadanga", "Jashore", "Jhenaidah", "Khulna", "Kushtia", "Magura", "Meherpur", "Narail", "Satkhira"
+      ]
+    },
+    {
+      name: "Barishal", zillas: [
+        "Barguna", "Barishal", "Bhola", "Jhalokathi", "Patuakhali", "Pirojpur"
+      ]
+    },
+    {
+      name: "Sylhet", zillas: [
+        "Habiganj", "Moulvibazar", "Sunamganj", "Sylhet"
+      ]
+    },
+    {
+      name: "Rangpur", zillas: [
+        "Dinajpur", "Gaibandha", "Kurigram", "Lalmonirhat", "Nilphamari", "Panchagarh", "Rangpur", "Thakurgaon"
+      ]
+    },
+    {
+      name: "Mymensingh", zillas: [
+        "Jamalpur", "Mymensingh", "Netrokona", "Sherpur"
+      ]
+    },
   ];
   const selectedDivision = divisions.find(d => d.name === division);
   const zillaOptions = selectedDivision ? selectedDivision.zillas : [];
@@ -240,7 +256,7 @@ function CheckoutForm() {
             setDivision(e.target.value);
             setZilla("");
           }}
-          style={{backgroundImage: 'linear-gradient(45deg, #6366f1 0%, #a21caf 100%)', backgroundBlendMode: 'multiply'}}
+          style={{ backgroundImage: 'linear-gradient(45deg, #6366f1 0%, #a21caf 100%)', backgroundBlendMode: 'multiply' }}
         >
           <option value="">বিভাগ নির্বাচন করুন</option>
           {divisions.map(d => (
@@ -260,7 +276,7 @@ function CheckoutForm() {
             setDeliveryCharge(e.target.value === "Dhaka" ? 60 : 100);
           }}
           disabled={!division}
-          style={{backgroundImage: 'linear-gradient(45deg, #6366f1 0%, #a21caf 100%)', backgroundBlendMode: 'multiply'}}
+          style={{ backgroundImage: 'linear-gradient(45deg, #6366f1 0%, #a21caf 100%)', backgroundBlendMode: 'multiply' }}
         >
           <option value="">জেলা নির্বাচন করুন</option>
           {zillaOptions.map(z => (
@@ -280,14 +296,83 @@ function CheckoutForm() {
           onChange={e => setDetailAddress(e.target.value)}
         />
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        <div className="space-y-2">
-          <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-1">কালো প্ল্যানার (Black) সংখ্যা</label>
-          <input type="number" name="qty_black" min="0" value={qtyBlack} onChange={e => setQtyBlack(e.target.value)} className="w-full bg-zinc-950/50 border border-white/5 rounded-xl px-4 py-3.5 focus:outline-none focus:border-blue-500 transition-all text-white text-sm placeholder:text-zinc-700 focus:bg-zinc-900/80 focus:ring-4 focus:ring-blue-500/10" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* Black Planner Variant */}
+        <div className={`flex bg-zinc-950/50 border rounded-2xl p-4 items-center gap-4 transition-all duration-300 ${parseInt(qtyBlack) > 0 ? "border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.15)] bg-blue-500/5" : "border-white/5 hover:border-white/20"}`}>
+          <div className="relative w-24 h-28 rounded-xl overflow-hidden flex-shrink-0 bg-zinc-900 border border-white/10 shadow-inner group">
+            <Image src="/ProductImgae1.jpeg" alt="Black Planner" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+          </div>
+          <div className="flex-1 flex flex-col justify-between h-full py-1">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <h4 className="text-base font-bold text-white leading-tight">প্ল্যানার</h4>
+                {parseInt(qtyBlack) > 0 && <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />}
+              </div>
+              <div className="text-xs text-zinc-400 mb-3">Black Edition</div>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setQtyBlack(prev => Math.max(0, (parseInt(prev) || 0) - 1).toString())}
+                className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${!qtyBlack || parseInt(qtyBlack) === 0 ? "bg-zinc-800/50 text-zinc-600 cursor-not-allowed" : "bg-zinc-800 text-white hover:bg-zinc-700 hover:text-blue-400 active:scale-90"}`}
+                disabled={!qtyBlack || parseInt(qtyBlack) === 0}
+              >
+                <div className="w-3.5 h-[2px] bg-current rounded-full" />
+              </button>
+              <div className="w-8 font-black text-white text-center text-lg">{parseInt(qtyBlack) || 0}</div>
+              <button
+                type="button"
+                onClick={() => setQtyBlack(prev => ((parseInt(prev) || 0) + 1).toString())}
+                className="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center text-white hover:bg-zinc-700 hover:text-blue-400 active:scale-90 transition-all shadow-md"
+              >
+                <div className="relative w-3.5 h-3.5 flex items-center justify-center">
+                  <div className="absolute w-full h-[2px] bg-current rounded-full" />
+                  <div className="absolute h-full w-[2px] bg-current rounded-full" />
+                </div>
+              </button>
+            </div>
+            <input type="hidden" name="qty_black" value={parseInt(qtyBlack) || 0} />
+          </div>
         </div>
-        <div className="space-y-2">
-          <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-1">সাদা প্ল্যানার (White) সংখ্যা</label>
-          <input type="number" name="qty_white" min="0" value={qtyWhite} onChange={e => setQtyWhite(e.target.value)} className="w-full bg-zinc-950/50 border border-white/5 rounded-xl px-4 py-3.5 focus:outline-none focus:border-blue-500 transition-all text-white text-sm placeholder:text-zinc-700 focus:bg-zinc-900/80 focus:ring-4 focus:ring-blue-500/10" />
+
+        {/* White Planner Variant */}
+        <div className={`flex bg-zinc-950/50 border rounded-2xl p-4 items-center gap-4 transition-all duration-300 ${parseInt(qtyWhite) > 0 ? "border-purple-500/50 shadow-[0_0_15px_rgba(168,85,247,0.15)] bg-purple-500/5" : "border-white/5 hover:border-white/20"}`}>
+          <div className="relative w-24 h-28 rounded-xl overflow-hidden flex-shrink-0 bg-zinc-900 border border-white/10 shadow-inner group">
+            <Image src="/ProductImgae2.jpeg" alt="White Planner" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+          </div>
+          <div className="flex-1 flex flex-col justify-between h-full py-1">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <h4 className="text-base font-bold text-white leading-tight">প্ল্যানার</h4>
+                {parseInt(qtyWhite) > 0 && <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />}
+              </div>
+              <div className="text-xs text-zinc-400 mb-3">White Edition</div>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setQtyWhite(prev => Math.max(0, (parseInt(prev) || 0) - 1).toString())}
+                className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${!qtyWhite || parseInt(qtyWhite) === 0 ? "bg-zinc-800/50 text-zinc-600 cursor-not-allowed" : "bg-zinc-800 text-white hover:bg-zinc-700 hover:text-purple-400 active:scale-90"}`}
+                disabled={!qtyWhite || parseInt(qtyWhite) === 0}
+              >
+                <div className="w-3.5 h-[2px] bg-current rounded-full" />
+              </button>
+              <div className="w-8 font-black text-white text-center text-lg">{parseInt(qtyWhite) || 0}</div>
+              <button
+                type="button"
+                onClick={() => setQtyWhite(prev => ((parseInt(prev) || 0) + 1).toString())}
+                className="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center text-white hover:bg-zinc-700 hover:text-purple-400 active:scale-90 transition-all shadow-md"
+              >
+                <div className="relative w-3.5 h-3.5 flex items-center justify-center">
+                  <div className="absolute w-full h-[2px] bg-current rounded-full" />
+                  <div className="absolute h-full w-[2px] bg-current rounded-full" />
+                </div>
+              </button>
+            </div>
+            <input type="hidden" name="qty_white" value={parseInt(qtyWhite) || 0} />
+          </div>
         </div>
       </div>
       {/* Delivery area selection removed, now auto-calculated from zilla */}
