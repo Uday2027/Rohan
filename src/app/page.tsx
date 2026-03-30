@@ -222,7 +222,8 @@ function CheckoutForm() {
           <CheckCircle2 className="text-green-400" size={40} />
         </div>
         <h3 className="text-2xl font-bold mb-2 text-white">ধন্যবাদ! 🎉</h3>
-        <p className="text-zinc-300">আপনার অর্ডার সফলভাবে সম্পন্ন হয়েছে। আমরা শীঘ্রই আপনার সাথে যোগাযোগ করব।</p>
+        <p className="text-zinc-300 mb-2">আপনার অর্ডার সফলভাবে সম্পন্ন হয়েছে। আমরা শীঘ্রই আপনার সাথে যোগাযোগ করব।</p>
+        <p className="text-zinc-500 text-xs font-medium">জরুরি প্রয়োজনে আমাদের ফোন করতে পারেন: <a href="tel:+8801972653480" className="text-blue-400 hover:underline">+880 1972-653480</a></p>
         <button onClick={() => setSuccess(false)} className="mt-6 text-blue-400 hover:text-blue-300 font-medium px-6 py-2 rounded-full border border-blue-500/30 hover:bg-blue-500/10 transition-colors">
           নতুন অর্ডার করুন
         </button>
@@ -919,7 +920,8 @@ export default function Home() {
                   </div>
                   <div>
                     <div className="text-zinc-300 font-bold mb-1">যেকোনো প্রশ্ন থাকলে কল করুন</div>
-                    <div className="text-zinc-500 text-sm font-medium">অর্ডার ও তথ্যের জন্য সরাসরি কথা বলুন</div>
+                    <a href="tel:+8801972653480" className="text-zinc-500 text-sm font-medium hover:text-blue-400 transition-colors">+880 1972-653480</a>
+                    <div className="text-zinc-400 text-[10px] mt-1 font-medium">অর্ডার ও তথ্যের জন্য সরাসরি কথা বলুন</div>
                   </div>
                 </li>
                 <li className="flex items-start gap-4">
